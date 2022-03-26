@@ -8,12 +8,22 @@ if ($_SESSION['User'] == "") {
 	exit();
 }
 
-if (isset($_POST['search'])) {
+
+
+	if (isset($_POST['search'])) {
+		$strSQL   = "SELECT * FROM std_offense LEFT JOIN student ON std_offense.std_id = student.std_id LEFT JOIN wrong ON std_offense.wr_id = wrong.wr_id LEFT JOIN member ON std_offense.mem_id = member.mem_id ";
+		$strSQL .= "WHERE std_offense.std_off_date LIKE '" . $_POST["search"] . "%' AND std_offense.std_off_status = 'ติดกิจการ' ";
+		$strSQL .= "order by student.std_class ASC";
+		$objQuery = mysqli_query($conn, $strSQL);
+	}
+else {
+
 	$strSQL   = "SELECT * FROM std_offense LEFT JOIN student ON std_offense.std_id = student.std_id LEFT JOIN wrong ON std_offense.wr_id = wrong.wr_id LEFT JOIN member ON std_offense.mem_id = member.mem_id ";
-	$strSQL .= "WHERE std_offense.std_off_date LIKE '" . $_POST["search"] . "%' AND std_offense.std_off_status = 'ติดกิจการ' ";
+	$strSQL .= "WHERE std_offense.std_off_status = 'ติดกิจการ' ";
 	$strSQL .= "order by student.std_class ASC";
-	$objQuery = mysqli_query($conn,$strSQL);
+	$objQuery = mysqli_query($conn, $strSQL);
 }
+
 ?>
 <html>
 
@@ -84,43 +94,43 @@ if (isset($_POST['search'])) {
 		</div>
 	</nav>
 	<div class="container">
-	<div class="row justify-content-xl-center">
-	 <div class="col-xl-auto">
-		<p>
-			<!-- ค้นหาข้อมูล -->
-			<form action="report.php" method="POST" enctype="multipart/form-data" name="form2">
-				<table class="table table-borderless table-responsive">
-					<tr>
-						<td align="right" valign="bottom">ค้นหาวันที่ : </td>
-						<td width="80%"><input class="form-control" type="date" id="example-date-input" name="search" value="<?= date("Y-m-d") ?>"></td>
-						<td align="left">
-							<button type="submit" class="btn btn-success" name="se" value="search">ค้นหา</button>
-							
-						</td>
-					</tr>
-					<!-- แสดงผล -->
-				</table>
-			</form>
-			<!-- <div class="row d-flex flex-row-reverse">
+		<div class="row justify-content-xl-center">
+			<div class="col-xl-auto">
+				<p>
+					<!-- ค้นหาข้อมูล -->
+				<form action="report.php" method="POST" enctype="multipart/form-data" name="form2">
+					<table class="table table-borderless table-responsive">
+						<tr>
+							<td align="right" valign="bottom">ค้นหาวันที่ : </td>
+							<td width="80%"><input class="form-control" type="date" id="example-date-input" name="search" value="<?= date("Y-m-d") ?>"></td>
+							<td align="left">
+								<button type="submit" class="btn btn-success" name="se" value="search">ค้นหา</button>
+
+							</td>
+						</tr>
+						<!-- แสดงผล -->
+					</table>
+				</form>
+				<!-- <div class="row d-flex flex-row-reverse">
 				<button id="btnPrint" class="btn btn-info">Print</button>
 			</div> -->
-			<table border="1" class="table table-hover table-responsive" id="masterContent">
-				<thead class="thead-dark">
-					<tr align="center">
-						<th scope="col">รหัสนักศึกษา</th>
-						<th scope="col">ชื่อ-นามสกุล</th>
-						<th scope="col">ห้อง</th>
-						<th scope="col">แผนก</th>
-						<th scope="col">ความผิด</th>
-						<th scope="col">คะแนน</th>
-						<th scope="col">วันที่</th>
-						<th scope="col">สถานะ</th>
-						<th scope="col">ผู้ออกใบเตือน</th>
-					</tr>
-				</thead>
-				<tbody>
-					<?php if (isset($_POST['search'])) {
-						while ($res = mysqli_fetch_array($objQuery,MYSQLI_ASSOC)) { ?>
+				<table border="1" class="table table-hover table-responsive" id="masterContent">
+					<thead class="thead-dark">
+						<tr align="center">
+							<th scope="col">รหัสนักศึกษา</th>
+							<th scope="col">ชื่อ-นามสกุล</th>
+							<th scope="col">ห้อง</th>
+							<th scope="col">แผนก</th>
+							<th scope="col">ความผิด</th>
+							<th scope="col">คะแนน</th>
+							<th scope="col">วันที่</th>
+							<th scope="col">สถานะ</th>
+							<th scope="col">ผู้ออกใบเตือน</th>
+						</tr>
+					</thead>
+					<tbody>
+						<?php //if (isset($_POST['search'])) {
+						while ($res = mysqli_fetch_array($objQuery, MYSQLI_ASSOC)) { ?>
 							<tr>
 								<td align="center"><?= $res["std_id"] ?></td>
 								<td><?= $res["std_tname"] ?> <?= $res["std_fname"] ?> <?= $res["std_lname"] ?></td>
@@ -132,12 +142,13 @@ if (isset($_POST['search'])) {
 								<td align="center"><?= $res["std_off_status"] ?></td>
 								<td align="center"><?php echo $res["mem_name"] ?></td>
 							</tr>
-					<?php }
-					} ?>
-				</tbody>
-			</table>
+						<?php }
+						//} 
+						?>
+					</tbody>
+				</table>
 			</div>
-			</div>
+		</div>
 	</div>
 	<script type="text/javascript">
 		$(function() {
@@ -160,4 +171,5 @@ if (isset($_POST['search'])) {
 		});
 	</script>
 </body>
+
 </html>
